@@ -20,16 +20,6 @@ class _ExpensesState extends State<Expenses> {
         date: DateTime.now(),
         category: Category.work),
     Expense(
-        title: "Pandeiro Pagodinho",
-        amount: 350,
-        date: DateTime.now(),
-        category: Category.leisure),
-    Expense(
-        title: "Trezoitão pra matar o gato do vizinho",
-        amount: 1500,
-        date: DateTime.now(),
-        category: Category.work),
-    Expense(
         title: "Cachaça 51",
         amount: 15,
         date: DateTime.now(),
@@ -50,25 +40,22 @@ class _ExpensesState extends State<Expenses> {
       date: DateTime.now(),
       category: Category.work,
     ),
-    Expense(
-      title: "Quem tem medo de Teresinha Soares?",
-      amount: 200,
-      date: DateTime.now(),
-      category: Category.leisure,
-    ),
-    Expense(
-        title: "Umas brejas",
-        amount: 50,
-        date: DateTime.now(),
-        category: Category.leisure),
   ];
 
   void _openAddExpenseOverlay() {
     showModalBottomSheet(
         context: context,
         builder: (context) {
-          return const NewExpense();
+          return NewExpense(
+            onAddExpense: _addExpense,
+          );
         });
+  }
+
+  void _addExpense(Expense expense) {
+    setState(() {
+      _registeredExpenses.add(expense);
+    });
   }
 
   @override
@@ -76,17 +63,16 @@ class _ExpensesState extends State<Expenses> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Expenses"),
-        actions: [
-          IconButton(
-            onPressed: _openAddExpenseOverlay,
-            icon: const Icon(Icons.add),
-          )
-        ],
       ),
       body: Column(
         children: [
           Expanded(child: ExpensesList(expenses: _registeredExpenses)),
         ],
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+      floatingActionButton: FloatingActionButton(
+        onPressed: _openAddExpenseOverlay,
+        child: const Icon(Icons.add),
       ),
     );
   }
