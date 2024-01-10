@@ -78,6 +78,7 @@ class _NewExpenseState extends State<NewExpense> {
           TextField(
             maxLength: 50,
             keyboardType: TextInputType.text,
+            textCapitalization: TextCapitalization.sentences,
             controller: _titleController,
             decoration: const InputDecoration(
               labelText: "Title",

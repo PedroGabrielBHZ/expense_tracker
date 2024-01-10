@@ -1,3 +1,4 @@
+import 'package:expense_tracker/widgets/chart/chart.dart';
 import 'package:expense_tracker/widgets/expenses_list.dart';
 import 'package:expense_tracker/models/expense.dart';
 import 'package:expense_tracker/widgets/new_expense.dart';
@@ -15,29 +16,9 @@ class Expenses extends StatefulWidget {
 class _ExpensesState extends State<Expenses> {
   final List<Expense> _registeredExpenses = [
     Expense(
-        title: "Steinway & Sons Flügel Modell D-274",
-        amount: 150000.00,
-        date: DateTime.now(),
-        category: Category.work),
-    Expense(
-        title: "Cachaça 51",
-        amount: 15,
-        date: DateTime.now(),
-        category: Category.leisure),
-    Expense(
-        title: "Viagem pra Bahia",
-        amount: 1500,
-        date: DateTime.now(),
-        category: Category.travel),
-    Expense(
-        title: "Jantar no Mocotó",
-        amount: 150,
-        date: DateTime.now(),
-        category: Category.leisure),
-    Expense(
-      title: "Facsimile Tarsila do Amaral",
-      amount: 150000.00,
-      date: DateTime.now(),
+      title: 'New Shoes',
+      amount: 69.99,
+      date: DateTime.now().subtract(const Duration(days: 2)),
       category: Category.work,
     ),
   ];
@@ -58,15 +39,49 @@ class _ExpensesState extends State<Expenses> {
     });
   }
 
+  void _deleteExpense(Expense expense) {
+    final expenseIndex = _registeredExpenses.indexOf(expense);
+    setState(() {
+      _registeredExpenses.remove(expense);
+    });
+    ScaffoldMessenger.of(context).hideCurrentSnackBar();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text("Deleted ${expense.title}"),
+        duration: const Duration(seconds: 3),
+        action: SnackBarAction(
+          label: 'Undo',
+          onPressed: () {
+            setState(() {
+              _registeredExpenses.insert(expenseIndex, expense);
+            });
+          },
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    Widget expensesList = const Center(
+      child: Text("No expenses added yet"),
+    );
+
+    if (_registeredExpenses.isNotEmpty) {
+      expensesList = ExpensesList(
+        expenses: _registeredExpenses,
+        onDelete: _deleteExpense,
+      );
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: const Text("Expenses"),
       ),
       body: Column(
         children: [
-          Expanded(child: ExpensesList(expenses: _registeredExpenses)),
+          Chart(expenses: _registeredExpenses),
+          Expanded(child: expensesList),
         ],
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
