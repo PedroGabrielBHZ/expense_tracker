@@ -63,6 +63,8 @@ class _ExpensesState extends State<Expenses> {
 
   @override
   Widget build(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
+
     Widget expensesList = const Center(
       child: Text("No expenses added yet"),
     );
@@ -78,12 +80,25 @@ class _ExpensesState extends State<Expenses> {
       appBar: AppBar(
         title: const Text("Expenses"),
       ),
-      body: Column(
-        children: [
-          Chart(expenses: _registeredExpenses),
-          Expanded(child: expensesList),
-        ],
-      ),
+      body: width < 600
+          ? Column(
+              children: [
+                Chart(expenses: _registeredExpenses),
+                Expanded(child: expensesList),
+              ],
+            )
+          : Row(
+              children: [
+                Expanded(
+                  flex: 2,
+                  child: Chart(expenses: _registeredExpenses),
+                ),
+                Expanded(
+                  flex: 3,
+                  child: expensesList,
+                ),
+              ],
+            ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       floatingActionButton: FloatingActionButton(
         onPressed: _openAddExpenseOverlay,
